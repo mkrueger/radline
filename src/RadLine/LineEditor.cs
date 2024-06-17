@@ -26,6 +26,8 @@ namespace RadLine
         public IHighlighter? Highlighter { get; init; }
         public ILineEditorHistory History => _history;
 
+        public ICompletionRenderer CompletionRenderer { get; set; }
+
         public LineEditor(IAnsiConsole? terminal = null, IInputSource? source = null, IServiceProvider? provider = null)
         {
             _console = terminal ?? AnsiConsole.Console;
@@ -185,6 +187,7 @@ namespace RadLine
 
                 // Render the line
                 _renderer.RenderLine(state);
+                CompletionRenderer?.RenderLine(state.Buffer);
             }
         }
 

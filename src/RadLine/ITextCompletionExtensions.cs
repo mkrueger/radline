@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RadLine
@@ -7,10 +7,10 @@ namespace RadLine
     {
         public static bool TryGetCompletions(
             this ITextCompletion completion,
-            string prefix, string word, string suffix,
+            string currentString,
             [NotNullWhen(true)] out string[]? result)
         {
-            var completions = completion.GetCompletions(prefix, word, suffix);
+            var completions = completion.GetCompletions(currentString);
             if (completions == null || !completions.Any())
             {
                 result = null;

@@ -1,9 +1,13 @@
 using System;
+using System.Linq;
 
 namespace RadLine
 {
     public sealed class AutoCompleteCommand : LineEditorCommand
     {
+        string originalString = "";
+        string lastBuffer = "";
+
         private const string Position = nameof(Position);
         private const string Index = nameof(Index);
 
@@ -54,12 +58,14 @@ namespace RadLine
             }
 
             // Get the prefix and word
-            var prefix = context.Buffer.Content.Substring(0, start);
+            var prefix = context.Buffer.Content.Substring(0, end);
             var word = context.Buffer.Content.Substring(start, end - start);
-            var suffix = context.Buffer.Content.Substring(end, context.Buffer.Content.Length - end);
-
+            if (originalString.Length == 0 || lastBuffer != prefix)
+            {
+                originalString = prefix;
+            }
             // Get the completions
-            if (!completion.TryGetCompletions(prefix, word, suffix, out var completions))
+            if (!completion.TryGetCompletions(originalString, out var completions))
             {
                 context.Buffer.Move(originalPosition);
                 return;
@@ -73,6 +79,7 @@ namespace RadLine
                 return;
             }
 
+
             // Remove the current word
             if (start != end)
             {
@@ -85,6 +92,8 @@ namespace RadLine
 
             // Move to the end of the word
             context.Buffer.MoveToEndOfWord();
+
+            lastBuffer = context.Buffer.Content;
 
             // Increase the completion index
             context.SetState(Position, start);
